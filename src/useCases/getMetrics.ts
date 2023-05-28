@@ -8,6 +8,7 @@ interface GetMetricsUseCaseResponse {
   total: number
   totalOnDiet: number
   totalOffDiet: number
+  totalOfBestDay: number
 }
 
 export class GetMetricsUseCase {
@@ -28,10 +29,15 @@ export class GetMetricsUseCase {
       isPartOfDiet: false,
     })
 
+    const totalOfBestDay = await this.mealsRepository.countUserMealsOfBestDay(
+      userId,
+    )
+
     return {
       total,
       totalOnDiet,
       totalOffDiet,
+      totalOfBestDay,
     }
   }
 }

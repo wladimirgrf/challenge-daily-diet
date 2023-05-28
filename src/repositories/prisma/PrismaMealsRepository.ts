@@ -1,11 +1,11 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma, Meal } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { Replace } from '@/helpers/Replace'
 import { CountByUserIdProps, MealsRepository } from '../MealsRepository'
 
 export class PrismaMealsRepository implements MealsRepository {
-  async findById(id: string): Promise<Meal | null> {
+  async findById(id: string) {
     const meal = await prisma.meal.findUnique({
       where: { id },
     })
@@ -17,7 +17,7 @@ export class PrismaMealsRepository implements MealsRepository {
     return meal
   }
 
-  async findManyFromUser(userId: string): Promise<Meal[]> {
+  async findManyFromUser(userId: string) {
     const meals = await prisma.meal.findMany({
       where: { userId },
     })
@@ -25,10 +25,7 @@ export class PrismaMealsRepository implements MealsRepository {
     return meals
   }
 
-  async countByUserId({
-    userId,
-    isPartOfDiet,
-  }: CountByUserIdProps): Promise<number> {
+  async countByUserId({ userId, isPartOfDiet }: CountByUserIdProps) {
     const count = await prisma.meal.count({
       where: {
         userId,
@@ -39,7 +36,24 @@ export class PrismaMealsRepository implements MealsRepository {
     return count
   }
 
-  async create(data: Prisma.MealUncheckedCreateInput): Promise<Meal> {
+  async countUserMealsOfBestDay(userId: string) {
+    const bestDay = await prisma.meal.groupBy({
+      by: ['date'],
+      where: {
+        userId,
+        isPartOfDiet: true,
+      },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 1,
+    })
+
+    const totalMeals = bestDay.length > 0 ? bestDay[0]._count.id : 0
+
+    return totalMeals
+  }
+
+  async create(data: Prisma.MealUncheckedCreateInput) {
     const meal = await prisma.meal.create({
       data,
     })
@@ -47,9 +61,7 @@ export class PrismaMealsRepository implements MealsRepository {
     return meal
   }
 
-  async save(
-    data: Replace<Prisma.MealUncheckedUpdateInput, { id: string }>,
-  ): Promise<Meal> {
+  async save(data: Replace<Prisma.MealUncheckedUpdateInput, { id: string }>) {
     const { id, ...props } = data
 
     const meal = await prisma.meal.update({
@@ -60,7 +72,7 @@ export class PrismaMealsRepository implements MealsRepository {
     return meal
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string) {
     await prisma.meal.delete({
       where: { id },
     })

@@ -12,4 +12,5 @@ export interface MealsRepository {
   findById(id: string): Promise<Meal | null>
   findManyFromUser(userId: string): Promise<Meal[]>
   countByUserId(props: CountByUserIdProps): Promise<number>
+  countUserMealsOfBestDay(userId: string): Promise<number>
 }
