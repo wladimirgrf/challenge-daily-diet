@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma, Meal } from '@prisma/client'
 
 import { Replace } from '@/helpers/Replace'
-import { MealsRepository } from '../MealsRepository'
+import { CountByUserIdProps, MealsRepository } from '../MealsRepository'
 
 export class PrismaMealsRepository implements MealsRepository {
   async findById(id: string): Promise<Meal | null> {
@@ -23,6 +23,20 @@ export class PrismaMealsRepository implements MealsRepository {
     })
 
     return meals
+  }
+
+  async countByUserId({
+    userId,
+    isPartOfDiet,
+  }: CountByUserIdProps): Promise<number> {
+    const count = await prisma.meal.count({
+      where: {
+        userId,
+        isPartOfDiet,
+      },
+    })
+
+    return count
   }
 
   async create(data: Prisma.MealUncheckedCreateInput): Promise<Meal> {
