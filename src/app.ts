@@ -11,7 +11,7 @@ export const app = fastify()
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
-  sign: { expiresIn: '10m' },
+  sign: { expiresIn: '1h' },
 })
 
 app.register(usersRoutes)
@@ -21,7 +21,7 @@ app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
     return reply
       .status(400)
-      .send({ message: 'Validation error.', issues: error.format })
+      .send({ message: 'Validation error.', issues: error.issues })
   }
 
   if (env.NODE_ENV !== 'production') {

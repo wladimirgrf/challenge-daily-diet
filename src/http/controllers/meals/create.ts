@@ -7,8 +7,8 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createMealBodySchema = z.object({
     name: z.string(),
     description: z.string(),
-    date: z.date(),
-    isPartOfDiet: z.literal(true),
+    date: z.coerce.date(),
+    isPartOfDiet: z.union([z.literal(true), z.literal(false)]),
   })
 
   const { name, description, date, isPartOfDiet } = createMealBodySchema.parse(
@@ -17,7 +17,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
   const useCase = makeCreateMealUseCase()
 
-  await useCase.execute({
+  const { meal } = await useCase.execute({
     userId: request.user.sub,
     name,
     description,
@@ -25,5 +25,5 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     isPartOfDiet,
   })
 
-  return reply.status(201).send()
+  return reply.status(201).send({ meal })
 }
