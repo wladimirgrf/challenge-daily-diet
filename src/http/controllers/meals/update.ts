@@ -1,15 +1,21 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 
-import { makeCreateMealUseCase } from '@/useCases/factories/makeCreateMealUseCase'
+import { makeUpdateMealUseCase } from '@/useCases/factories/makeUpdateMealUseCase'
 import { ResourceNotFoundError } from '@/useCases/errors/ResourceNotFoundError'
 
-export async function create(request: FastifyRequest, reply: FastifyReply) {
+export async function update(request: FastifyRequest, reply: FastifyReply) {
+  const paramsSchema = z.object({
+    id: z.string().uuid(),
+  })
+
+  const { id } = paramsSchema.parse(request.params)
+
   const bodySchema = z.object({
-    name: z.string(),
-    description: z.string(),
-    date: z.coerce.date(),
-    isPartOfDiet: z.union([z.literal(true), z.literal(false)]),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    date: z.coerce.date().optional(),
+    isPartOfDiet: z.union([z.literal(true), z.literal(false)]).optional(),
   })
 
   const { name, description, date, isPartOfDiet } = bodySchema.parse(
@@ -17,10 +23,11 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   )
 
   try {
-    const useCase = makeCreateMealUseCase()
+    const useCase = makeUpdateMealUseCase()
 
     const { meal } = await useCase.execute({
       userId: request.user.sub,
+      mealId: id,
       name,
       description,
       date,
