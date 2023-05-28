@@ -5,4 +5,5 @@ export interface MealsRepository {
   save(data: Prisma.MealUncheckedUpdateInput): Promise<Meal>
   delete(id: string): Promise<void>
   findById(id: string): Promise<Meal | null>
+  findManyFromUser(userId: string): Promise<Meal[]>
 }

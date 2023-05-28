@@ -17,6 +17,14 @@ export class PrismaMealsRepository implements MealsRepository {
     return meal
   }
 
+  async findManyFromUser(userId: string): Promise<Meal[]> {
+    const meals = await prisma.meal.findMany({
+      where: { userId },
+    })
+
+    return meals
+  }
+
   async create(data: Prisma.MealUncheckedCreateInput): Promise<Meal> {
     const meal = await prisma.meal.create({
       data,
