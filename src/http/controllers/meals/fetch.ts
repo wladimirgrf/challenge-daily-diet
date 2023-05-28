@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
-import { makeFetchUserMealsUseCase } from '@/useCases/factories/makeFetchUserMealsUseCase'
+import { makeFetchMealsUseCase } from '@/useCases/factories/makeFetchMealsUseCase'
 
 export async function fetch(request: FastifyRequest, reply: FastifyReply) {
-  const useCase = makeFetchUserMealsUseCase()
+  const useCase = makeFetchMealsUseCase()
 
   const { meals } = await useCase.execute({
     userId: request.user.sub,

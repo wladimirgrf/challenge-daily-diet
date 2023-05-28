@@ -2,20 +2,20 @@ import { Meal } from '@prisma/client'
 
 import { MealsRepository } from '@/repositories/MealsRepository'
 
-interface FetchUserMealsUseCaseRequest {
+interface FetchMealsUseCaseRequest {
   userId: string
 }
 
-interface FetchUserMealsUseCaseResponse {
+interface FetchMealsUseCaseResponse {
   meals: Meal[]
 }
 
-export class FetchUserMealsUseCase {
+export class FetchMealsUseCase {
   constructor(private mealsRepository: MealsRepository) {}
 
   async execute({
     userId,
-  }: FetchUserMealsUseCaseRequest): Promise<FetchUserMealsUseCaseResponse> {
+  }: FetchMealsUseCaseRequest): Promise<FetchMealsUseCaseResponse> {
     const meals = await this.mealsRepository.findManyFromUser(userId)
 
     return {
