@@ -34,7 +34,7 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
       isPartOfDiet,
     })
 
-    return reply.status(201).send({ meal })
+    return reply.status(200).send({ meal })
   } catch (err) {
     if (err instanceof ResourceNotFoundError) {
       return reply.status(409).send({ message: err.message })
